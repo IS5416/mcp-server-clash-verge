@@ -114,7 +114,8 @@ class MihomoClient:
         resp = await self._client.request(method, path, **kwargs)
         if resp.status_code >= 400:
             raise MihomoError(f"{method} {path} → {resp.status_code}: {resp.text[:200]}")
-        return resp.json()
+        # Some endpoints return 204 No Content
+        return resp.json() if resp.content else {}
 
     # ── proxies ──────────────────────────────────────────────
 
@@ -146,7 +147,9 @@ class MihomoClient:
 
     async def reload_config(self) -> None:
         """Force reload configuration from disk."""
-        await self._request("PUT", "/configs", params={"force": "true"})
+        resp = await self._client.put("/configs", json={}, params={"force": "true"})
+        if resp.status_code >= 400:
+            raise MihomoError(f"PUT /configs → {resp.status_code}: {resp.text[:200]}")
 
     # ── rules ────────────────────────────────────────────────
 

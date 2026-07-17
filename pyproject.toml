@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "mcp-server-clash-verge"
-version = "0.1.1"
+version = "0.1.2"
 description = "MCP server for Clash Verge (Mihomo) — control proxy nodes, switch modes, and manage routes from Claude Code"
 readme = "README.md"
 license = { text = "MIT" }

@@ -1,8 +1,16 @@
 # mcp-server-clash-verge
 
-MCP (Model Context Protocol) server for Clash Verge / Mihomo (Clash Meta). Lets Claude Code and other MCP-compatible AI agents control your proxy — switch nodes, change modes, reload config, test latency — directly from conversation.
+MCP (Model Context Protocol) server for [Clash Verge Rev](https://github.com/clash-verge-rev/clash-verge-rev) / Mihomo (Clash Meta). Lets Claude Code and other MCP-compatible AI agents control your proxy — switch nodes, change modes, reload config, test latency — directly from conversation.
 
 [中文文档](README_ZH.md)
+
+## One-Click Install
+
+**Tell Claude Code this one sentence:**
+
+> Help me install https://raw.githubusercontent.com/IS5416/mcp-server-clash-verge/main/SETUP.md
+
+Claude will auto-detect your platform, install the package, configure `.mcp.json`, and verify everything. **No manual steps. No environment variables.** Restart Claude Code and you're done.
 
 ## Why
 
@@ -12,18 +20,12 @@ This MCP server gives Claude 7 tools to manage your Mihomo proxy autonomously.
 
 ## Requirements
 
-- [Clash Verge](https://github.com/clash-verge-rev/clash-verge-rev) (or any Mihomo-based client) with **External Controller** enabled
+- [Clash Verge Rev](https://github.com/clash-verge-rev/clash-verge-rev) (or any Mihomo-based client) with **External Controller** enabled
 - Python ≥ 3.10
 
-## Quick Start
+## Manual Install
 
-### 1. Enable External Controller in Clash Verge
-
-Settings → Clash Field → ☑ External Controller
-
-Default: `http://127.0.0.1:9090` with secret `set-your-secret`.
-
-### 2. Install
+### 1. Install the package
 
 ```bash
 pip install mcp-server-clash-verge
@@ -32,25 +34,21 @@ pip install mcp-server-clash-verge
 Or from source:
 
 ```bash
-git clone https://github.com/neo/mcp-server-clash-verge.git
+git clone https://github.com/IS5416/mcp-server-clash-verge.git
 cd mcp-server-clash-verge
 pip install -e .
 ```
 
-### 3. Configure Claude Code
+### 2. Configure Claude Code
 
-Add to your Claude Code `settings.json`:
+Create or update `~/.claude/.mcp.json`:
 
 ```json
 {
   "mcpServers": {
     "clash-verge": {
       "command": "python",
-      "args": ["-m", "mcp_server_clash_verge"],
-      "env": {
-        "MIHOMO_API_URL": "http://127.0.0.1:9097",
-        "MIHOMO_API_SECRET": "set-your-secret"
-      }
+      "args": ["-m", "mcp_server_clash_verge"]
     }
   }
 }
@@ -63,19 +61,17 @@ After PyPI publication, use the shorter form:
   "mcpServers": {
     "clash-verge": {
       "command": "uvx",
-      "args": ["mcp-server-clash-verge"],
-      "env": {
-        "MIHOMO_API_URL": "http://127.0.0.1:9090",
-        "MIHOMO_API_SECRET": "your-secret"
-      }
+      "args": ["mcp-server-clash-verge"]
     }
   }
 }
 ```
 
+**No `env` block needed.** The MCP server auto-detects Clash Verge Rev's configuration file on Windows, macOS, and Linux.
+
 Restart Claude Code.
 
-### 4. Try It
+### 3. Try It
 
 > "List all my proxy nodes."  
 > "Switch to HK-01."  
@@ -93,12 +89,39 @@ Restart Claude Code.
 | `reload_config` | Force reload Mihomo configuration from disk |
 | `list_rules` | Show active routing rules |
 
-## Environment Variables
+## Configuration
+
+**Zero config by default.** The server auto-detects Clash Verge Rev on all platforms:
+
+| Platform | Config path |
+|----------|------------|
+| Windows | `%APPDATA%\io.github.clash-verge-rev.clash-verge-rev\config.yaml` |
+| macOS | `~/Library/Application Support/io.github.clash-verge-rev.clash-verge-rev/config.yaml` |
+| Linux | `~/.config/io.github.clash-verge-rev.clash-verge-rev/config.yaml` |
+
+### Override (optional)
+
+Set environment variables in `.mcp.json` if you use a non-standard Clash client:
+
+```json
+{
+  "mcpServers": {
+    "clash-verge": {
+      "command": "python",
+      "args": ["-m", "mcp_server_clash_verge"],
+      "env": {
+        "MIHOMO_API_URL": "http://127.0.0.1:9090",
+        "MIHOMO_API_SECRET": "your-secret"
+      }
+    }
+  }
+}
+```
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `MIHOMO_API_URL` | `http://127.0.0.1:9090` | Mihomo external controller address |
-| `MIHOMO_API_SECRET` | `""` | API secret from Clash Verge settings |
+| `MIHOMO_API_URL` | auto-detected | Mihomo external controller address |
+| `MIHOMO_API_SECRET` | auto-detected | API secret from Clash Verge settings |
 
 ## License
 

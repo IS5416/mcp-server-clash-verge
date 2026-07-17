@@ -28,3 +28,6 @@ Thumbs.db
 
 # uv
 uv.lock
+
+# claude settings
+.claude/

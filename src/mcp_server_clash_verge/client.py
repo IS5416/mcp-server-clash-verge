@@ -1,6 +1,8 @@
 """Mihomo (Clash Meta) HTTP API client."""
 
 import os
+import platform
+from pathlib import Path
 from typing import Any
 
 import httpx
@@ -11,10 +13,46 @@ class MihomoError(Exception):
     pass
 
 
+def _find_clash_config() -> Path | None:
+    """Locate Clash Verge Rev config file on supported platforms."""
+    app_id = "io.github.clash-verge-rev.clash-verge-rev"
+    system = platform.system()
+    if system == "Windows":
+        base = Path(os.environ.get("APPDATA", ""))
+    elif system == "Darwin":
+        base = Path.home() / "Library" / "Application Support"
+    else:  # Linux
+        xdg = os.environ.get("XDG_CONFIG_HOME", str(Path.home() / ".config"))
+        base = Path(xdg)
+
+    config_path = base / app_id / "config.yaml"
+    return config_path if config_path.exists() else None
+
+
+def _parse_clash_config(path: Path) -> dict[str, str]:
+    """Extract external-controller and secret from Clash Verge config."""
+    result: dict[str, str] = {}
+    with open(path, encoding="utf-8") as f:
+        for line in f:
+            stripped = line.strip()
+            if stripped.startswith("external-controller:"):
+                val = stripped.split(":", 1)[1].strip()
+                if val:
+                    result["external_controller"] = val
+            elif stripped.startswith("secret:"):
+                val = stripped.split(":", 1)[1].strip()
+                result["secret"] = val
+    return result
+
+
 class MihomoClient:
     """Async HTTP client for Mihomo external controller API.
 
-    API docs: https://clash.wiki/configuration.html#external-controller
+    Configuration priority (highest to lowest):
+    1. Explicit constructor arguments
+    2. Environment variables (MIHOMO_API_URL, MIHOMO_API_SECRET)
+    3. Auto-detected from Clash Verge Rev config file
+    4. Built-in defaults (http://127.0.0.1:9090 / no secret)
     """
 
     def __init__(
@@ -22,8 +60,46 @@ class MihomoClient:
         base_url: str | None = None,
         secret: str | None = None,
     ):
-        self.base_url = (base_url or os.getenv("MIHOMO_API_URL", "http://127.0.0.1:9090")).rstrip("/")
-        self.secret = secret or os.getenv("MIHOMO_API_SECRET", "")
+        # Resolve base_url: explicit → env → auto-detect → default
+        self.base_url = (
+            base_url
+            or os.getenv("MIHOMO_API_URL")
+            or self._auto_detect_url()
+            or "http://127.0.0.1:9090"
+        ).rstrip("/")
+
+        # Resolve secret: explicit → env → auto-detect → default
+        # Empty string from env or auto-detect means no secret
+        self.secret = secret
+        if self.secret is None:
+            self.secret = os.getenv("MIHOMO_API_SECRET")
+        if self.secret is None:
+            self.secret = self._auto_detect_secret()
+
+        self._client = httpx.AsyncClient(
+            base_url=self.base_url,
+            headers=self._headers(),
+            timeout=httpx.Timeout(10.0),
+        )
+
+    @staticmethod
+    def _auto_detect_url() -> str | None:
+        path = _find_clash_config()
+        if path:
+            cfg = _parse_clash_config(path)
+            if "external_controller" in cfg:
+                # Clash config stores "127.0.0.1:9097" — already a URL host:port
+                addr = cfg["external_controller"]
+                return f"http://{addr}"
+        return None
+
+    @staticmethod
+    def _auto_detect_secret() -> str | None:
+        path = _find_clash_config()
+        if path:
+            cfg = _parse_clash_config(path)
+            return cfg.get("secret")
+        return None
         self._client = httpx.AsyncClient(
             base_url=self.base_url,
             headers=self._headers(),

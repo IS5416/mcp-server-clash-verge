@@ -7,12 +7,17 @@ name = "mcp-server-clash-verge"
 version = "0.1.0"
 description = "MCP server for Clash Verge (Mihomo) — control proxy nodes, switch modes, and manage routes from Claude Code"
 readme = "README.md"
-license = {text = "MIT"}
+license = { text = "MIT" }
 requires-python = ">=3.10"
-authors = [
-    {name = "Neo"},
+authors = [{ name = "Neo" }]
+keywords = [
+    "mcp",
+    "clash",
+    "mihomo",
+    "proxy",
+    "clash-verge",
+    "model-context-protocol",
 ]
-keywords = ["mcp", "clash", "mihomo", "proxy", "clash-verge", "model-context-protocol"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
@@ -22,13 +27,10 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
 ]
-dependencies = [
-    "mcp>=1.0.0",
-    "httpx>=0.27",
-]
+dependencies = ["mcp>=1.0.0", "httpx>=0.27"]
 
 [project.scripts]
 mcp-server-clash-verge = "mcp_server_clash_verge:main"
 
 [project.urls]
-Repository = "https://github.com/neo/mcp-server-clash-verge"
+Repository = "https://github.com/IS5416/mcp-server-clash-verge"

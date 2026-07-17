@@ -28,6 +28,7 @@ async def list_tools() -> list[Tool]:
         Tool(
             name="list_proxies",
             description="List all proxy groups and nodes with their types, current selection, and delay/latency. Use this to see available nodes before switching.",
+            inputSchema={"type": "object", "properties": {}},
         ),
         Tool(
             name="switch_proxy",
@@ -50,6 +51,7 @@ async def list_tools() -> list[Tool]:
         Tool(
             name="get_proxy_mode",
             description="Get the current proxy mode (rule, global, or direct).",
+            inputSchema={"type": "object", "properties": {}},
         ),
         Tool(
             name="set_proxy_mode",
@@ -87,10 +89,12 @@ async def list_tools() -> list[Tool]:
         Tool(
             name="reload_config",
             description="Force reload the Mihomo configuration file. Use after updating subscription or editing config manually.",
+            inputSchema={"type": "object", "properties": {}},
         ),
         Tool(
             name="list_rules",
             description="List all routing rules (domain, IP, GEOIP, etc.) currently active in Mihomo.",
+            inputSchema={"type": "object", "properties": {}},
         ),
     ]
 

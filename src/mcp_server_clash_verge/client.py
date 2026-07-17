@@ -100,11 +100,6 @@ class MihomoClient:
             cfg = _parse_clash_config(path)
             return cfg.get("secret")
         return None
-        self._client = httpx.AsyncClient(
-            base_url=self.base_url,
-            headers=self._headers(),
-            timeout=httpx.Timeout(10.0),
-        )
 
     def _headers(self) -> dict[str, str]:
         h = {}

@@ -80,6 +80,9 @@ class MihomoClient:
             base_url=self.base_url,
             headers=self._headers(),
             timeout=httpx.Timeout(10.0),
+            # Never route Mihomo API calls through the system proxy —
+            # in global/direct mode that creates a loop and returns 502.
+            proxy=None,
         )
 
     @staticmethod
@@ -141,15 +144,13 @@ class MihomoClient:
         """Return current Mihomo configuration."""
         return await self._request("GET", "/configs")
 
-    async def patch_configs(self, updates: dict[str, Any]) -> None:
+    async def patch_configs(self, updates: dict[str, Any]) -> dict[str, Any]:
         """Patch Mihomo config (e.g. mode, sniffer, etc.). PATCH /configs."""
-        await self._client.request("PATCH", "/configs", json=updates)
+        return await self._request("PATCH", "/configs", json=updates)
 
-    async def reload_config(self) -> None:
-        """Force reload configuration from disk."""
-        resp = await self._client.put("/configs", json={}, params={"force": "true"})
-        if resp.status_code >= 400:
-            raise MihomoError(f"PUT /configs → {resp.status_code}: {resp.text[:200]}")
+    async def reload_config(self) -> dict[str, Any]:
+        """Force reload configuration from disk. PATCH-equivalent for full reload."""
+        return await self._request("PUT", "/configs", json={}, params={"force": "true"})
 
     # ── rules ────────────────────────────────────────────────
 

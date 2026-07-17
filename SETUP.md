@@ -89,4 +89,4 @@ Say:
 
 - **No environment variables needed.** The MCP server auto-detects Clash Verge Rev's config file on all 3 platforms.
 - If auto-detection fails (non-standard Clash client), set `MIHOMO_API_URL` and `MIHOMO_API_SECRET` in the server's `env` object inside `~/.claude.json`.
-- The MCP server talks to Mihomo via `stdio` — no network ports opened.
+- The MCP server talks to Claude Code via `stdio` and to Mihomo via HTTP on localhost. The MCP server itself opens no network ports — only Mihomo's external controller port is used.

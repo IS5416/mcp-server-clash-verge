@@ -104,7 +104,7 @@ Set environment variables in `~/.claude.json` if you use a non-standard Clash cl
   "command": "python",
   "args": ["-m", "mcp_server_clash_verge"],
   "env": {
-    "MIHOMO_API_URL": "http://127.0.0.1:9090",
+    "MIHOMO_API_URL": "http://127.0.0.1:9097",
     "MIHOMO_API_SECRET": "your-secret"
   },
   "type": "stdio"
@@ -115,6 +115,19 @@ Set environment variables in `~/.claude.json` if you use a non-standard Clash cl
 |----------|---------|-------------|
 | `MIHOMO_API_URL` | auto-detected | Mihomo external controller address |
 | `MIHOMO_API_SECRET` | auto-detected | API secret from Clash Verge settings |
+
+## Use Cases
+
+- Claude Code hits proxy timeout during web scraping/search → automatically switch to a low-latency node and retry
+- Need temporary global proxy → `set_proxy_mode global`, switch back to rule mode when done
+- After subscription update → `reload_config` to refresh without touching the GUI
+- Debug routing issues → `list_rules` to check current rules match expectations
+
+## Security
+
+- The MCP server communicates with Claude Code exclusively via `stdio` — it opens no network ports
+- Mihomo API secret is read from your Clash Verge config file, never hardcoded or logged
+- All operations are local to your Mihomo instance — no data is sent externally
 
 ## License
 

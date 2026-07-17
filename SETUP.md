@@ -34,37 +34,37 @@ pip install git+https://github.com/IS5416/mcp-server-clash-verge.git
 
 ### Step 3: Configure Claude Code
 
-Create or update `~/.claude/.mcp.json` (user-global MCP config).
+Read `~/.claude.json`. This is Claude Code's main config file. It contains an `mcpServers` object with existing servers (like `markitdown`, `tolaria`, etc.).
 
-**Path:**
-- Linux/macOS: `~/.claude/.mcp.json`
-- Windows: `%USERPROFILE%\.claude\.mcp.json`
+**CRITICAL**: Insert into the `mcpServers` object inside `~/.claude.json` — do NOT create a separate `.mcp.json` file. Merge with existing entries; never overwrite them.
 
-**If uvx is available, write:**
+Add the `clash-verge` entry. Find the first Python executable on this machine:
+
+```bash
+python -c "import sys; print(sys.executable)"
+```
+
+Use that path as `command`. Then insert this into the `mcpServers` object:
+
 ```json
-{
-  "mcpServers": {
-    "clash-verge": {
-      "command": "uvx",
-      "args": ["mcp-server-clash-verge"]
-    }
-  }
+"clash-verge": {
+  "command": "<RESOLVED_PYTHON_PATH>",
+  "args": ["-m", "mcp_server_clash_verge"],
+  "env": {},
+  "type": "stdio"
 }
 ```
 
-**If only python + pip is available, write:**
+If `uv` is available, you can use the uvx form instead:
+
 ```json
-{
-  "mcpServers": {
-    "clash-verge": {
-      "command": "python",
-      "args": ["-m", "mcp_server_clash_verge"]
-    }
-  }
+"clash-verge": {
+  "command": "uvx",
+  "args": ["mcp-server-clash-verge"],
+  "env": {},
+  "type": "stdio"
 }
 ```
-
-If the `.mcp.json` file already has other servers, merge the `clash-verge` entry into `mcpServers` — do NOT overwrite other entries.
 
 ### Step 4: Verify
 
@@ -88,5 +88,5 @@ Say:
 ## Notes
 
 - **No environment variables needed.** The MCP server auto-detects Clash Verge Rev's config file on all 3 platforms.
-- If auto-detection fails (non-standard Clash client), set `MIHOMO_API_URL` and `MIHOMO_API_SECRET` in the `.mcp.json` `env` block.
+- If auto-detection fails (non-standard Clash client), set `MIHOMO_API_URL` and `MIHOMO_API_SECRET` in the server's `env` object inside `~/.claude.json`.
 - The MCP server talks to Mihomo via `stdio` — no network ports opened.

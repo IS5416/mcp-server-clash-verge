@@ -8,7 +8,7 @@ MCP (Model Context Protocol) 服务器，用于 [Clash Verge Rev](https://github
 
 > 帮我安装 https://raw.githubusercontent.com/IS5416/mcp-server-clash-verge/main/SETUP.md
 
-Claude 会自动检测你的平台、安装包、创建配置、验证一切。**无需手动操作。无需配置环境变量。** 重启 Claude Code 即可使用。
+Claude 会自动检测你的平台、安装包、配置 `~/.claude.json`、验证一切。**无需手动操作。无需配置环境变量。** 重启 Claude Code 即可使用。
 
 ## 为什么需要
 
@@ -39,29 +39,25 @@ pip install -e .
 
 ### 2. 配置 Claude Code
 
-创建或更新 `~/.claude/.mcp.json`：
+编辑 `~/.claude.json`，在 `mcpServers` 对象中添加：
 
 ```json
-{
-  "mcpServers": {
-    "clash-verge": {
-      "command": "python",
-      "args": ["-m", "mcp_server_clash_verge"]
-    }
-  }
+"clash-verge": {
+  "command": "python",
+  "args": ["-m", "mcp_server_clash_verge"],
+  "env": {},
+  "type": "stdio"
 }
 ```
 
-PyPI 发布后可用更简洁的形式：
+如果你安装了 `uv`：
 
 ```json
-{
-  "mcpServers": {
-    "clash-verge": {
-      "command": "uvx",
-      "args": ["mcp-server-clash-verge"]
-    }
-  }
+"clash-verge": {
+  "command": "uvx",
+  "args": ["mcp-server-clash-verge"],
+  "env": {},
+  "type": "stdio"
 }
 ```
 
@@ -99,20 +95,17 @@ PyPI 发布后可用更简洁的形式：
 
 ### 手动覆盖（可选）
 
-如果你使用非标准 Clash 客户端，可在 `.mcp.json` 中设置环境变量：
+如果你使用非标准 Clash 客户端，可在 `~/.claude.json` 中设置环境变量：
 
 ```json
-{
-  "mcpServers": {
-    "clash-verge": {
-      "command": "python",
-      "args": ["-m", "mcp_server_clash_verge"],
-      "env": {
-        "MIHOMO_API_URL": "http://127.0.0.1:9097",
-        "MIHOMO_API_SECRET": "your-secret"
-      }
-    }
-  }
+"clash-verge": {
+  "command": "python",
+  "args": ["-m", "mcp_server_clash_verge"],
+  "env": {
+    "MIHOMO_API_URL": "http://127.0.0.1:9097",
+    "MIHOMO_API_SECRET": "your-secret"
+  },
+  "type": "stdio"
 }
 ```
 

@@ -10,7 +10,7 @@ MCP (Model Context Protocol) server for [Clash Verge Rev](https://github.com/cla
 
 > Help me install https://raw.githubusercontent.com/IS5416/mcp-server-clash-verge/main/SETUP.md
 
-Claude will auto-detect your platform, install the package, configure `.mcp.json`, and verify everything. **No manual steps. No environment variables.** Restart Claude Code and you're done.
+Claude will auto-detect your platform, install the package, configure `~/.claude.json`, and verify everything. **No manual steps. No environment variables.** Restart Claude Code and you're done.
 
 ## Why
 
@@ -41,29 +41,25 @@ pip install -e .
 
 ### 2. Configure Claude Code
 
-Create or update `~/.claude/.mcp.json`:
+Edit `~/.claude.json` and add to the `mcpServers` object:
 
 ```json
-{
-  "mcpServers": {
-    "clash-verge": {
-      "command": "python",
-      "args": ["-m", "mcp_server_clash_verge"]
-    }
-  }
+"clash-verge": {
+  "command": "python",
+  "args": ["-m", "mcp_server_clash_verge"],
+  "env": {},
+  "type": "stdio"
 }
 ```
 
-After PyPI publication, use the shorter form:
+If you have `uv` installed:
 
 ```json
-{
-  "mcpServers": {
-    "clash-verge": {
-      "command": "uvx",
-      "args": ["mcp-server-clash-verge"]
-    }
-  }
+"clash-verge": {
+  "command": "uvx",
+  "args": ["mcp-server-clash-verge"],
+  "env": {},
+  "type": "stdio"
 }
 ```
 
@@ -101,20 +97,17 @@ Restart Claude Code.
 
 ### Override (optional)
 
-Set environment variables in `.mcp.json` if you use a non-standard Clash client:
+Set environment variables in `~/.claude.json` if you use a non-standard Clash client:
 
 ```json
-{
-  "mcpServers": {
-    "clash-verge": {
-      "command": "python",
-      "args": ["-m", "mcp_server_clash_verge"],
-      "env": {
-        "MIHOMO_API_URL": "http://127.0.0.1:9090",
-        "MIHOMO_API_SECRET": "your-secret"
-      }
-    }
-  }
+"clash-verge": {
+  "command": "python",
+  "args": ["-m", "mcp_server_clash_verge"],
+  "env": {
+    "MIHOMO_API_URL": "http://127.0.0.1:9090",
+    "MIHOMO_API_SECRET": "your-secret"
+  },
+  "type": "stdio"
 }
 ```
 

@@ -82,7 +82,9 @@ class MihomoClient:
             timeout=httpx.Timeout(10.0),
             # Never route Mihomo API calls through the system proxy —
             # in global/direct mode that creates a loop and returns 502.
-            proxy=None,
+            # proxy=None is the httpx default and still follows env vars;
+            # trust_env=False actually disables proxy detection.
+            trust_env=False,
         )
 
     @staticmethod

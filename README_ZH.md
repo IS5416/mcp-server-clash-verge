@@ -1,6 +1,6 @@
 # mcp-server-clash-verge
 
-MCP (Model Context Protocol) 服务器，用于 [Clash Verge Rev](https://github.com/clash-verge-rev/clash-verge-rev) / Mihomo (Clash Meta)。让 Claude Code 及其他支持 MCP 的 AI Agent 可以直接控制代理 — 切换节点、修改模式、重载配置、测试延迟 — 全部在对话中完成。
+MCP (Model Context Protocol) 服务器，用于 [Clash Verge Rev](https://github.com/clash-verge-rev/clash-verge-rev) / Mihomo (Clash Meta)。让 Claude Code 及其他支持 MCP 的 AI Agent 可以直接控制代理 — 切换节点、修改模式、开关 TUN、重载配置、测试延迟 — 全部在对话中完成。
 
 ## 一键安装
 
@@ -14,7 +14,7 @@ Claude 会自动检测你的平台、安装包、配置 `~/.claude.json`、验�
 
 Claude Code 在代理背后遇到网络错误时，你不想切换到 Clash Verge GUI 手动找节点，再告诉 Claude "再试一次"。你希望 Claude 自己修。
 
-这个 MCP 服务器给 Claude 7 个工具，让它自主管理你的 Mihomo 代理。
+这个 MCP 服务器给 Claude 8 个工具，让它自主管理你的 Mihomo 代理。
 
 ## 环境要求
 
@@ -69,6 +69,7 @@ pip install -e .
 
 > "列出所有代理节点。"  
 > "切换到 HK-01。"  
+> "开启 TUN 模式。"
 > "网络又出错了，帮我找一个延迟低的节点切过去。"
 
 ## 工具说明
@@ -79,6 +80,7 @@ pip install -e .
 | `switch_proxy` | 切换代理组到指定节点 | `PUT /proxies/{group}` |
 | `get_proxy_mode` | 查看当前模式 (rule/global/direct) | `GET /configs` |
 | `set_proxy_mode` | 设置模式 (rule/global/direct) | `PATCH /configs` |
+| `set_tun_mode` | 开启或关闭 Mihomo TUN 模式 | `PATCH /configs` |
 | `test_proxy_delay` | 测试指定节点延迟 (毫秒) | `GET /proxies/{name}/delay` |
 | `reload_config` | 强制重载配置文件 | `PUT /configs?force=true` |
 | `list_rules` | 显示当前路由规则 | `GET /rules` |
@@ -118,6 +120,7 @@ pip install -e .
 
 - Claude Code 网页爬取/搜索时代理超时 → 自动切换到低延迟节点重试
 - 需要临时全局代理 → `set_proxy_mode global`，用完后切回规则模式
+- 需要接管不遵循系统代理的流量 → 调用 `set_tun_mode` 并传入 `enabled: true`
 - 更新订阅后 → `reload_config` 刷新配置，无需手动点
 - 排查路由问题 → `list_rules` 查看当前规则是否匹配预期
 

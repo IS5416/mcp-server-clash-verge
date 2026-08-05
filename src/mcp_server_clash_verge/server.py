@@ -68,6 +68,20 @@ async def list_tools() -> list[Tool]:
             },
         ),
         Tool(
+            name="set_tun_mode",
+            description="Enable or disable Mihomo TUN mode. TUN captures traffic that does not follow the system proxy. Clash Verge must already have the required service/administrator permissions configured.",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "enabled": {
+                        "type": "boolean",
+                        "description": "True to enable TUN mode, false to disable it.",
+                    },
+                },
+                "required": ["enabled"],
+            },
+        ),
+        Tool(
             name="test_proxy_delay",
             description="Test the latency/delay of a specific proxy node or group. Returns delay in milliseconds. Use this to check which nodes are fast before switching. The node name must match exactly what list_proxies returns.",
             inputSchema={
@@ -181,6 +195,11 @@ async def _handle_tool(client: MihomoClient, name: str, args: dict[str, Any]) ->
     elif name == "set_proxy_mode":
         await client.patch_configs({"mode": args["mode"]})
         return {"ok": True, "mode": args["mode"]}
+
+    elif name == "set_tun_mode":
+        enabled = args["enabled"]
+        await client.set_tun_mode(enabled)
+        return {"ok": True, "enabled": enabled}
 
     elif name == "test_proxy_delay":
         timeout = args.get("timeout", 3000)

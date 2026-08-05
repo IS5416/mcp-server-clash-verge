@@ -1,6 +1,6 @@
 # mcp-server-clash-verge
 
-MCP (Model Context Protocol) server for [Clash Verge Rev](https://github.com/clash-verge-rev/clash-verge-rev) / Mihomo (Clash Meta). Lets Claude Code and other MCP-compatible AI agents control your proxy — switch nodes, change modes, reload config, test latency — directly from conversation.
+MCP (Model Context Protocol) server for [Clash Verge Rev](https://github.com/clash-verge-rev/clash-verge-rev) / Mihomo (Clash Meta). Lets Claude Code and other MCP-compatible AI agents control your proxy — switch nodes, change modes, toggle TUN, reload config, test latency — directly from conversation.
 
 [中文文档](README_ZH.md)
 
@@ -16,7 +16,7 @@ Claude will auto-detect your platform, install the package, configure `~/.claude
 
 When Claude Code hits network errors behind a proxy, you don't want to switch to the Clash Verge GUI, find a faster node, then tell Claude "try again." You want Claude to fix it itself.
 
-This MCP server gives Claude 7 tools to manage your Mihomo proxy autonomously.
+This MCP server gives Claude 8 tools to manage your Mihomo proxy autonomously.
 
 ## Requirements
 
@@ -71,6 +71,7 @@ Restart Claude Code.
 
 > "List all my proxy nodes."  
 > "Switch to HK-01."  
+> "Enable TUN mode."
 > "I'm getting network errors, find a fast node and switch to it."
 
 ## Tools
@@ -81,6 +82,7 @@ Restart Claude Code.
 | `switch_proxy` | Switch a proxy group to a specific node |
 | `get_proxy_mode` | Current mode: rule / global / direct |
 | `set_proxy_mode` | Set mode: rule / global / direct |
+| `set_tun_mode` | Enable or disable Mihomo TUN mode |
 | `test_proxy_delay` | Test latency of a specific node (milliseconds) |
 | `reload_config` | Force reload Mihomo configuration from disk |
 | `list_rules` | Show active routing rules |
@@ -120,6 +122,7 @@ Set environment variables in `~/.claude.json` if you use a non-standard Clash cl
 
 - Claude Code hits proxy timeout during web scraping/search → automatically switch to a low-latency node and retry
 - Need temporary global proxy → `set_proxy_mode global`, switch back to rule mode when done
+- Need to capture traffic that ignores system proxy settings → `set_tun_mode` with `enabled: true`
 - After subscription update → `reload_config` to refresh without touching the GUI
 - Debug routing issues → `list_rules` to check current rules match expectations
 

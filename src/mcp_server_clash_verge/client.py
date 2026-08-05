@@ -150,6 +150,10 @@ class MihomoClient:
         """Patch Mihomo config (e.g. mode, sniffer, etc.). PATCH /configs."""
         return await self._request("PATCH", "/configs", json=updates)
 
+    async def set_tun_mode(self, enabled: bool) -> dict[str, Any]:
+        """Enable or disable Mihomo TUN mode at runtime."""
+        return await self.patch_configs({"tun": {"enable": enabled}})
+
     async def reload_config(self) -> dict[str, Any]:
         """Force reload configuration from disk. PATCH-equivalent for full reload."""
         return await self._request("PUT", "/configs", json={}, params={"force": "true"})
